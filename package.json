@@ -1,0 +1,13 @@
+{
+  "name": "tekken-overlay-system",
+  "version": "1.0.0",
+  "description": "A clean overlay system for Tekken 8 tournaments.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
