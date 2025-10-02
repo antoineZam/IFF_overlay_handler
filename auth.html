@@ -121,7 +121,7 @@
 <body>
     <div class="auth-container">
         <div class="logo">Tournament Overlay handler</div>
-        <div class="subtitle">Tekken 8 IFL Championship</div>
+        <div class="subtitle">Tekken 8 IFF Tournament</div>
         
         <script>
             // Check for error parameter
@@ -143,8 +143,12 @@
         <div class="info">
             <strong>After authentication, you can access:</strong>
             <div class="access-links">
-                <a href="/match-control?key=" id="control-link">Match Control Panel</a>
-                <a href="/match-overlay?key=" id="overlay-link">Match Overlay</a>
+                <a href="/rematch-control?key=" id="control-link">Rematch Control Panel</a>
+                <a href="/rematch-overlay?key=" id="overlay-link">Rematch Overlay</a>
+            </div>
+            <div class="access-links">
+                <a href="/finals-control?key=" id="finals-control-link">Finals Control Panel</a>
+                <a href="/finals-overlay?key=" id="finals-overlay-link">Finals Overlay</a>
             </div>
         </div>
     </div>
@@ -153,8 +157,10 @@
         // Auto-fill links when key is entered
         document.getElementById('key').addEventListener('input', function() {
             const key = this.value;
-            document.getElementById('control-link').href = `/match-control?key=${key}`;
-            document.getElementById('overlay-link').href = `/match-overlay?key=${key}`;
+            document.getElementById('rematch-control-link').href = `/rematch-control?key=${key}`;
+            document.getElementById('rematch-overlay-link').href = `/rematch-overlay?key=${key}`;
+            document.getElementById('finals-control-link').href = `/finals-control?key=${key}`;
+            document.getElementById('finals-overlay-link').href = `/finals-overlay?key=${key}`;
         });
     </script>
 </body>

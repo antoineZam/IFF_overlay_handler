@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tekken 8 IFL Tournament Overlay</title>
+    <title>Tekken 8 IFF Tournament Overlay</title>
     <style>
-        @import url('https://fonts.google.com/specimen/Archivo');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Bebas+Neue&family=Roboto+Condensed:wght@500;700&display=swap');
         body {
             background-color: transparent;
             font-family: 'Roboto Condensed', sans-serif;
@@ -32,24 +32,8 @@
             background-repeat: no-repeat;
         }
 
-        #p1-name-bg {
-            background-image: url('./source/overlay/IFL_overlays_p1.png');
-        } 
-
-        #p2-name-bg {
-            background-image: url('./source/overlay/IFL_overlays_p2.png');
-        } 
-
-        #score-bg {
-            background-image: url('./source/overlay/IFL_overlays_tracker.png');
-        }
-
-        #logo-bg {
-            background-image: url('./source/overlay/IFL_overlays_logo.png');
-        }
-
-        #bottom-bar-bg {
-            background-image: url('./source/overlay/bottom_bar_elements.png');
+        #bg-image {
+            background-image: url('./source/overlay/IFF_gold_overlay.png');
         }
 
         .text-shadow {
@@ -66,22 +50,21 @@
             align-items: baseline;
         }
 
-        .player-info .team {
+        .player-info .ranking {
             top: 18px;
-            color: #cccccc;
-            font-size: 18px;
+            color: #C6A679;
+            font-size: 24px;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .player-info .name {
             font-size: 24px;
-        }
-
-        .separator {
-            margin: 0 5px;
+            font-family: 'Bebas Neue', sans-serif;
+            color: #E7E3DA;
         }
 
         #p1-info {
-            left: 230px;
+            left: 240px;
             justify-content: flex-start;
         }
 
@@ -90,25 +73,21 @@
             justify-content: flex-end;
         }
 
-        #p2-info .name { order: 1; }
-        #p2-info .separator { order: 2; }
-        #p2-info .team { order: 3; }
+        #p1-info .name { margin-left: 15px; }
+        #p2-info .name { order: 1; margin-right: 15px; }
+        #p2-info .ranking { order: 3; }
 
-        .player-info .team:empty {
+        .player-info .ranking:empty {
             display: none;
         }
 
-        .player-info .team:empty ~ .name {
+        .player-info .ranking:empty ~ .name {
             margin-left: -0px;
         }
 
-        #p2-info .team:empty ~ .name {
+        #p2-info .ranking:empty ~ .name {
             margin-right: -0x;
             margin-left: 0;
-        }
-
-        .player-info .team:empty + .separator {
-            display: none;
         }
 
         .score {
@@ -117,10 +96,11 @@
             font-size: 45px;
             width: 100px;
             text-align: center;
+            font-family: 'Archivo', sans-serif;
         }
 
         #p1-score {
-            left: 600px;
+            left: 610px;
         }
 
         #p2-score {
@@ -129,7 +109,7 @@
 
         .flag {
             position: absolute;
-            width: 80px;
+            width: 82px;
             height: 55px;
             background-size: cover;
             background-position: center;
@@ -137,16 +117,14 @@
 
         #p1-flag {
             top: 14px;
-            left: 134px;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 65% 100%);
-            border: white 1px solid;
+            left: 138px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 62% 100%);
         }
 
         #p2-flag {
-            top: 13px;
-            right: 141px;
+            top: 14px;
+            right: 136px;
             clip-path: polygon(0 0, 100% 0, 38% 100%, 0 100%);
-            border: white 1px solid;
         }
 
         #round { /*this one is done so far*/
@@ -159,22 +137,11 @@
             width: 600px;
             word-spacing: 5px;
         }
-        .event {
-            position: absolute;
-            bottom: 35px;
-            right: 460px;
-            font-size: 28px;
-            font-weight: 700;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="background-image" id="p1-name-bg"></div>
-        <div class="background-image" id="p2-name-bg"></div>
-        <div class="background-image" id="score-bg"></div>
-        <div class="background-image" id="logo-bg"></div>
-        <div class="background-image" id="bottom-bar-bg"></div>
+        <div class="background-image" id="bg-image"></div>
         
         <div id="p1-flag-container">
             <div class="flag" id="p1-flag"></div>
@@ -184,15 +151,14 @@
         </div>
  
         <div class="player-info text-shadow" id="p1-info">
-            <span class="team" id="p1-team"></span><span class="separator"> | </span><span class="name" id="p1-name"></span>
+            <span class="ranking" id="p1-ranking"></span><span class="name" id="p1-name"></span>
         </div>
         <div class="score text-shadow" id="p1-score">0</div>
         <div class="player-info text-shadow" id="p2-info">
-            <span class="team" id="p2-team"></span><span class="separator"> | </span><span class="name" id="p2-name"></span>
+            <span class="ranking" id="p2-ranking"></span><span class="name" id="p2-name"></span>
         </div>
         <div class="score text-shadow" id="p2-score">0</div>
         <div class="round text-shadow" id="round"></div>
-        <div class="event text-shadow" id="event"></div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -220,21 +186,15 @@
         });
 
         socket.on('data-update', (data) => {
-            document.getElementById('p1-team').textContent = data.p1Team || '';
+            document.getElementById('p1-ranking').textContent = data.p1Ranking || '';
             document.getElementById('p1-name').textContent = data.p1Name;
             document.getElementById('p1-score').textContent = data.p1Score;
             
-            document.getElementById('p2-team').textContent = data.p2Team || '';
+            document.getElementById('p2-ranking').textContent = data.p2Ranking || '';
             document.getElementById('p2-name').textContent = data.p2Name;
             document.getElementById('p2-score').textContent = data.p2Score;
             
             document.getElementById('round').textContent = data.round;
-
-            if (data.eventNumber) {
-                document.getElementById('event').textContent = `IFL WEEK #${data.eventNumber}`;
-            } else {
-                document.getElementById('event').textContent = '';
-            }
 
             const p1FlagEl = document.getElementById('p1-flag');
             const p2FlagEl = document.getElementById('p2-flag');

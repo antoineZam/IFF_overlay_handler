@@ -49,15 +49,14 @@ function loadData() {
     console.error('Error loading data:', error);
     const defaultData = {
       p1Flag: 'fr',
-      p1Team: 'Team 1',
+      p1Ranking: '#1',
       p1Name: 'Player 1',
       p2Flag: 'rn',
-      p2Team: 'Team 2',
+      p2Ranking: '#2',
       p2Name: 'Player 2',
       p1Score: 0,
       p2Score: 0,
-      round: 'Winners Round 1',
-      eventNumber: '1'
+      round: 'Winners Round 1'
     };
     // Save default data to file
     saveData(defaultData);
@@ -93,12 +92,20 @@ app.post('/auth', (req, res) => {
 });
 
 // Protected routes
-app.get('/match-control', requireAuth, (req, res) => {
-  res.sendFile(__dirname + '/match-control.html');
+app.get('/rematch-control', requireAuth, (req, res) => {
+  res.sendFile(__dirname + '/rematch-control.html');
 });
 
-app.get('/match-overlay', requireAuth, (req, res) => {
-  res.sendFile(__dirname + '/match-overlay.html');
+app.get('/rematch-overlay', requireAuth, (req, res) => {
+  res.sendFile(__dirname + '/rematch-overlay.html');
+});
+
+app.get('/finals-control', requireAuth, (req, res) => {
+  res.sendFile(__dirname + '/finals-control.html');
+});
+
+app.get('/finals-overlay', requireAuth, (req, res) => {
+  res.sendFile(__dirname + '/finals-overlay.html');
 });
 
 // Redirect root to auth
@@ -135,6 +142,8 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
-  console.log(`Open Control Panel at: http://localhost:${port}/match-control`);
-  console.log(`Add Overlay to OBS from: http://localhost:${port}/match-overlay`);
+  console.log(`Open Finals Control Panel at: http://localhost:${port}/finals-control`);
+  console.log(`Add Finals Overlay to OBS from: http://localhost:${port}/finals-overlay`);
+  console.log(`Open Rematch Control Panel at: http://localhost:${port}/rematch-control`);
+  console.log(`Add Rematch Overlay to OBS from: http://localhost:${port}/rematch-overlay`);
 });

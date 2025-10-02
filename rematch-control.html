@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tekken 8 IFL Tournament Control Panel</title>
+        <title>Tekken 8 IFF Tournament Control Panel</title>
         <style>
             .player-section {
                 background: #e9e9e9;
@@ -145,7 +145,7 @@
     </head>
     <body>
         <div class="container">
-            <h1>Tekken 8 IFL Tournament Overlay Control Panel</h1>
+            <h1>Tekken 8 IFF Tournament Overlay Rematch Control Panel</h1>
             <hr>
             <h2>Score Controls</h2>
             <div class="score-controls">
@@ -178,8 +178,8 @@
                     <select id="p1-flag"></select>
                 </div>
                 <div class="form-group">
-                        <label for="p1-team">Player 1 Team</label>
-                    <input type="text" id="p1-team" name="p1-team" placeholder="Enter Player 1 Team">
+                        <label for="p1-ranking">Player 1 Leaderboard Ranking</label>
+                    <input type="text" id="p1-ranking" name="p1-ranking" placeholder="Enter Player 1 Ranking">
                 </div>
                 <div class="form-group">
                     <label for="p1-name">Player 1 Name</label>
@@ -193,8 +193,8 @@
                     <select id="p2-flag"></select>
                 </div>
                 <div class="form-group">
-                <label for="p2-team">Player 2 Team</label>
-                <input type="text" id="p2-team" name="p2-team" placeholder="Enter Player 2 Team">
+                <label for="p2-ranking">Player 2 Leaderboard Ranking</label>
+                <input type="text" id="p2-ranking" name="p2-ranking" placeholder="Enter Player 2 Ranking">
                 </div>
                 <div class="form-group">
                     <label for="p2-name">Player 2 Name</label>
@@ -210,11 +210,7 @@
                 <input type="text" id="round" name="round" placeholder="Enter Round">
             </div>
             
-            <button class="update" onclick="updateNamesAndRound()">Update Player Names, Teams and Round informations</button>
-            <div class="form-group">
-                <label for="event-number">Event Number</label>
-                <input type="text" id="event-number" name="event-number" placeholder="Enter event number">
-            </div>
+            <button class="update" onclick="updateNamesAndRound()">Update Player Names, rankings and Round informations</button>
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -268,17 +264,16 @@
            data = serverData;
 
            document.getElementById('p1-flag').value = data.p1Flag;
-           document.getElementById('p1-team').value = data.p1Team;
+           document.getElementById('p1-ranking').value = data.p1Ranking || '';
            document.getElementById('p1-name').value = data.p1Name;
                document.getElementById('p1-score').textContent = data.p1Score;
            
            
            document.getElementById('p2-flag').value = data.p2Flag;
-           document.getElementById('p2-team').value = data.p2Team;
+           document.getElementById('p2-ranking').value = data.p2Ranking || '';
            document.getElementById('p2-name').value = data.p2Name;
                document.getElementById('p2-score').textContent = data.p2Score;
            document.getElementById('round').value = data.round;
-           document.getElementById('event-number').value = data.eventNumber;
         });
 
         function sendUpdate() {
@@ -287,30 +282,29 @@
 
         function updateNamesAndRound() {
             data.p1Flag = document.getElementById('p1-flag').value;
-            data.p1Team = document.getElementById('p1-team').value;
+            data.p1Ranking = document.getElementById('p1-ranking').value;
             data.p1Name = document.getElementById('p1-name').value;
             data.p2Flag = document.getElementById('p2-flag').value;
-            data.p2Team = document.getElementById('p2-team').value;
+            data.p2Ranking = document.getElementById('p2-ranking').value;
             data.p2Name = document.getElementById('p2-name').value;
             data.round = document.getElementById('round').value;
-            data.eventNumber = document.getElementById('event-number').value;
             sendUpdate();
         }
 
         function swapPlayers() {
             const p1Flag = document.getElementById('p1-flag').value;
-            const p1Team = document.getElementById('p1-team').value;
+            const p1Ranking = document.getElementById('p1-ranking').value;
             const p1Name = document.getElementById('p1-name').value;
             const p2Flag = document.getElementById('p2-flag').value;
-            const p2Team = document.getElementById('p2-team').value;
+            const p2Ranking = document.getElementById('p2-ranking').value;
             const p2Name = document.getElementById('p2-name').value;
 
             // Swap form values
             document.getElementById('p1-flag').value = p2Flag;
-            document.getElementById('p1-team').value = p2Team;
+            document.getElementById('p1-ranking').value = p2Ranking;
             document.getElementById('p1-name').value = p2Name;
             document.getElementById('p2-flag').value = p1Flag;
-            document.getElementById('p2-team').value = p1Team;
+            document.getElementById('p2-ranking').value = p1Ranking;
             document.getElementById('p2-name').value = p1Name;
             
             // Also swap scores in data object

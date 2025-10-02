@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekken 8 IFF Tournament Overlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Bebas+Neue&family=Roboto+Condensed:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: transparent;
+            font-family: 'Roboto Condensed', sans-serif;
+            color: #fff;
+            text-transform: uppercase;
+            margin: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+            background-repeat: no-repeat;
+        }
+
+        #bg-image {
+            background-image: url('./source/overlay/IFF_red_overlay.png');
+        }
+
+        .text-shadow {
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-info {
+            position: absolute;
+            top: 26px;
+            font-size: 24px;
+            font-weight: 500;
+            width: 550px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .player-info .ranking {
+            top: 18px;
+            color: #E67783;
+            font-size: 24px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .player-info .name {
+            font-size: 24px;
+            font-family: 'Bebas Neue', sans-serif;
+            color: #E7E3DA;
+        }
+
+        #p1-info {
+            left: 240px;
+            justify-content: flex-start;
+        }
+
+        #p2-info {
+            right: 240px;
+            justify-content: flex-end;
+        }
+
+        #p1-info .name { margin-left: 15px; }
+        #p2-info .name { order: 1; margin-right: 15px; }
+        #p2-info .ranking { order: 3; }
+
+        .player-info .ranking:empty {
+            display: none;
+        }
+
+        .player-info .ranking:empty ~ .name {
+            margin-left: -0px;
+        }
+
+        #p2-info .ranking:empty ~ .name {
+            margin-right: -0x;
+            margin-left: 0;
+        }
+
+        .score {
+            position: absolute;
+            top: 15px;
+            font-size: 45px;
+            width: 100px;
+            text-align: center;
+            font-family: 'Archivo', sans-serif;
+        }
+
+        #p1-score {
+            left: 610px;
+        }
+
+        #p2-score {
+            right: 610px;
+        }
+
+        .flag {
+            position: absolute;
+            width: 82px;
+            height: 55px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        #p1-flag {
+            top: 14px;
+            left: 138px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 62% 100%);
+        }
+
+        #p2-flag {
+            top: 14px;
+            right: 136px;
+            clip-path: polygon(0 0, 100% 0, 38% 100%, 0 100%);
+        }
+
+        #round { /*this one is done so far*/
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            text-align: center;
+            width: 600px;
+            word-spacing: 5px;
+        }
+        .event {
+            position: absolute;
+            bottom: 35px;
+            right: 460px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-image" id="bg-image"></div>
+        
+        <div id="p1-flag-container">
+            <div class="flag" id="p1-flag"></div>
+        </div>
+        <div id="p2-flag-container">
+            <div class="flag" id="p2-flag"></div>
+        </div>
+ 
+        <div class="player-info text-shadow" id="p1-info">
+            <span class="ranking" id="p1-ranking"></span><span class="name" id="p1-name"></span>
+        </div>
+        <div class="score text-shadow" id="p1-score">0</div>
+        <div class="player-info text-shadow" id="p2-info">
+            <span class="ranking" id="p2-ranking"></span><span class="name" id="p2-name"></span>
+        </div>
+        <div class="score text-shadow" id="p2-score">0</div>
+        <div class="round text-shadow" id="round"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Get connection key from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const connectionKey = urlParams.get('key');
+        
+        if (!connectionKey) {
+            window.location.href = '/auth';
+            throw new Error('No connection key provided');
+        }
+
+        const socket = io({
+            auth: {
+                token: connectionKey
+            }
+        });
+
+        // Handle connection errors
+        socket.on('connect_error', (error) => {
+            console.error('Connection failed:', error.message);
+            // For overlay, just show error in console, don't redirect (OBS might be using this)
+            document.body.innerHTML = '<div style="color: red; text-align: center; font-size: 24px; margin-top: 50px;">Authentication Error: Invalid Connection Key</div>';
+        });
+
+        socket.on('data-update', (data) => {
+            document.getElementById('p1-ranking').textContent = data.p1Ranking || '';
+            document.getElementById('p1-name').textContent = data.p1Name;
+            document.getElementById('p1-score').textContent = data.p1Score;
+            
+            document.getElementById('p2-ranking').textContent = data.p2Ranking || '';
+            document.getElementById('p2-name').textContent = data.p2Name;
+            document.getElementById('p2-score').textContent = data.p2Score;
+            
+            document.getElementById('round').textContent = data.round;
+
+            const p1FlagEl = document.getElementById('p1-flag');
+            const p2FlagEl = document.getElementById('p2-flag');
+        
+            console.log('Flag data received:', { p1Flag: data.p1Flag, p2Flag: data.p2Flag });
+            
+            if (data.p1Flag) {
+                const p1FlagUrl = `url(https://flagcdn.com/h240/${data.p1Flag.toLowerCase()}.png)`;
+                p1FlagEl.style.backgroundImage = p1FlagUrl;
+                console.log('P1 flag set to:', p1FlagUrl);
+            } else {
+                p1FlagEl.style.backgroundImage = 'none';
+                console.log('P1 flag cleared');
+            }
+            
+            if (data.p2Flag) {
+                const p2FlagUrl = `url(https://flagcdn.com/h240/${data.p2Flag.toLowerCase()}.png)`;
+                p2FlagEl.style.backgroundImage = p2FlagUrl;
+                console.log('P2 flag set to:', p2FlagUrl);
+            } else {
+                p2FlagEl.style.backgroundImage = 'none';
+                console.log('P2 flag cleared');
+            }
+        });
+    </script>
+</body>
+</html>
