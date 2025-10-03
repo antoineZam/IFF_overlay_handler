@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Set default connection key if not provided
-const CONNECTION_KEY = process.env.CONNECTION_KEY || '1924d04e6aef4a4a79da39614c2080f7';
+const CONNECTION_KEY = process.env.CONNECTION_KEY;
 console.log('Connection key:', CONNECTION_KEY);
 
 const port = 3000;
