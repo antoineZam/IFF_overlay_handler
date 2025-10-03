@@ -30,7 +30,8 @@ function requireAuth(req, res, next) {
   }
 }
 
-const dataFilePath = './source/data.json';
+const rematchDataFilePath = './source/rematch-data.json';
+const finalsDataFilePath = './source/finals-data.json';
 
 // Ensure the source directory exists
 if (!fs.existsSync('./source')) {
@@ -38,15 +39,15 @@ if (!fs.existsSync('./source')) {
 }
 
 
-function loadData() {
+function loadData(filePath) {
   try {
-    const data = fs.readFileSync(dataFilePath, 'utf8');
+    const data = fs.readFileSync(filePath, 'utf8');
     if (data.trim() === '') {
       throw new Error('File is empty');
     }
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error loading data:', error);
+    console.error(`Error loading data from ${filePath}:`, error);
     const defaultData = {
       p1Flag: 'fr',
       p1Ranking: '#1',
@@ -59,22 +60,23 @@ function loadData() {
       round: 'Winners Round 1'
     };
     // Save default data to file
-    saveData(defaultData);
+    saveData(filePath, defaultData);
     return defaultData;
   }
 }
 
-function saveData(data) {
+function saveData(filePath, data) {
   try {
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-    console.log('Data saved successfully to', dataFilePath);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    console.log('Data saved successfully to', filePath);
   } catch (error) {
-    console.error('Error saving data:', error);
+    console.error(`Error saving data to ${filePath}:`, error);
   }
 }
 
 
-let overlayData = loadData();
+let rematchData = loadData(rematchDataFilePath);
+let finalsData = loadData(finalsDataFilePath);
 
 // Authentication page
 app.get('/auth', (req, res) => {
@@ -125,14 +127,39 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
   console.log('A user connected successfully.');
 
-  socket.emit('data-update', overlayData);
+  const referer = socket.handshake.headers.referer || '';
+  let room;
+  let data;
+  let dataFilePath;
 
-  socket.on('update-data', (data) => {
-    overlayData = data;
-    saveData(overlayData);
+  if (referer.includes('/rematch-')) {
+    room = 'rematch';
+    data = rematchData;
+    dataFilePath = rematchDataFilePath;
+  } else if (referer.includes('/finals-')) {
+    room = 'finals';
+    data = finalsData;
+    dataFilePath = finalsDataFilePath;
+  } else {
+    console.error('Could not determine room from referer:', referer);
+    return socket.disconnect(true);
+  }
+
+  socket.join(room);
+  console.log(`A user joined room: ${room}`);
+
+  socket.emit('data-update', data);
+
+  socket.on('update-data', (updatedData) => {
+    if (room === 'rematch') {
+      rematchData = updatedData;
+    } else { // if (room === 'finals')
+      finalsData = updatedData;
+    }
+    saveData(dataFilePath, updatedData);
     
-    io.emit('data-update', overlayData);
-    console.log('Data updated:', overlayData);
+    io.to(room).emit('data-update', updatedData);
+    console.log(`Data updated for ${room}:`, updatedData);
   });
 
   socket.on('disconnect', () => {
