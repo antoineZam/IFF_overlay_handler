@@ -87,7 +87,7 @@ app.get('/auth', (req, res) => {
 app.post('/auth', (req, res) => {
   const key = req.body.key;
   if (key === CONNECTION_KEY) {
-    res.redirect(`/match-control?key=${key}`);
+    res.redirect(`/rematch-overlay?key=${key}`);
   } else {
     res.redirect('/auth?error=1');
   }
