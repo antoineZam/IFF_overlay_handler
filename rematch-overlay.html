@@ -10,17 +10,16 @@
             src: url('/source/fonts/Bebas_Neue/BebasNeue-Regular.ttf?v=1.1') format('truetype');
         }
         @font-face {
-            font-family: 'Archivo';
-            src: url('/source/fonts/Archivo/Archivo-VariableFont_wdth,wght.ttf?v=1.1') format('truetype');
+            font-family: 'Archivo_semi_bold';
+            src: url('/source/fonts/Archivo/static/Archivo-SemiBold.ttf?v=1.1') format('truetype');
         }
         @font-face {
-            font-family: 'Archivo';
-            src: url('/source/fonts/Archivo/Archivo-Italic-VariableFont_wdth,wght.ttf?v=1.1') format('truetype');
-            font-style: italic;
+            font-family: 'Archivo_condensed';
+            src: url('/source/fonts/Archivo/static/Archivo_Condensed-Light.ttf?v=1.1') format('truetype');
         }
         body {
             background-color: transparent;
-            font-family: 'Archivo', sans-serif;
+            font-family: 'Archivo_semi_bold', sans-serif;
             color: #fff;
             text-transform: uppercase;
             margin: 0;
@@ -66,12 +65,12 @@
             top: 18px;
             color: #E67783;
             font-size: 24px;
-            font-family: 'Archivo', sans-serif;
+            font-family: 'Archivo_condensed', sans-serif;
         }
 
         .player-info .name {
             font-size: 24px;
-            font-family: 'Archivo', sans-serif;
+            font-family: 'Archivo_semi_bold', sans-serif;
             color: #E7E3DA;
             letter-spacing: 2px;
         }
@@ -109,7 +108,7 @@
             font-size: 36px;
             width: 100px;
             text-align: center;
-            font-family: 'Archivo', sans-serif;
+            font-family: 'Archivo_condensed', sans-serif;
         }
 
         #p1-score {
@@ -171,11 +170,11 @@
         </div>
  
         <div class="player-info text-shadow" id="p1-info">
-            <span class="ranking">RANK </span><span class="ranking" id="p1-ranking"></span><span class="name" id="p1-name"></span>
+            <span class="ranking">RANK&nbsp;</span><span class="ranking" id="p1-ranking"></span><span class="name" id="p1-name"></span>
         </div>
         <div class="score text-shadow" id="p1-score">0</div>
         <div class="player-info text-shadow" id="p2-info">
-            <span class="ranking">RANK </span><span class="ranking" id="p2-ranking"></span><span class="name" id="p2-name"></span>
+            <span class="ranking">RANK&nbsp;</span><span class="ranking" id="p2-ranking"></span><span class="name" id="p2-name"></span>
         </div>
         <div class="score text-shadow" id="p2-score">0</div>
         <div class="round text-shadow" id="round"></div>
